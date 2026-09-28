@@ -1,6 +1,4 @@
 """Sensor that waits until source data is available before triggering ETL."""
-from datetime import datetime
-
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
 

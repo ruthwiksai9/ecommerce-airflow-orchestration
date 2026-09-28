@@ -59,10 +59,10 @@ def run_backfill_pipeline(**context):
     import sys
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
-    from src.transform.cleaner import transform_all
-    from src.transform.quality import run_quality_checks
     from src.load.loader import load_all
     from src.metrics.aggregator import run_all_metrics
+    from src.transform.cleaner import transform_all
+    from src.transform.quality import run_quality_checks
 
     conf = context["dag_run"].conf
     print(f"Running backfill: {conf['start_date']} → {conf['end_date']}")
