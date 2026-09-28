@@ -5,6 +5,7 @@ Orchestrates the full Extract → Transform → Quality → Load → Metrics pip
 Runs daily at 02:00 UTC. Retries 3× with exponential backoff on failure.
 Sends alerts on SLA miss or task failure.
 """
+
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -40,6 +41,7 @@ dag = DAG(
 
 # ─── Task functions ──────────────────────────────────────────────────────────
 
+
 def check_db_connection(**context):
     """Verify warehouse DB is reachable before starting pipeline."""
     hook = PostgresHook(postgres_conn_id="ecommerce_warehouse")
@@ -53,6 +55,7 @@ def check_db_connection(**context):
 def extract_data(**context):
     """Download source CSVs with retry logic."""
     import sys
+
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
 
@@ -73,6 +76,7 @@ def extract_data(**context):
 def transform_data(**context):
     """Clean and standardize all datasets."""
     import sys
+
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
     from src.transform.cleaner import transform_all
@@ -89,6 +93,7 @@ def transform_data(**context):
 def run_quality_checks(**context):
     """Execute data quality gates — fail DAG if critical checks fail."""
     import sys
+
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
     from src.transform.cleaner import transform_all
@@ -119,6 +124,7 @@ def branch_on_quality(**context):
 def load_to_warehouse(**context):
     """Batch load cleaned data to raw schema in warehouse."""
     import sys
+
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
     from src.load.loader import load_all
@@ -136,6 +142,7 @@ def load_to_warehouse(**context):
 def run_metrics(**context):
     """Compute aggregated metrics tables."""
     import sys
+
     sys.path.insert(0, "/opt/airflow")
     from src.metrics.aggregator import run_all_metrics
 
@@ -148,7 +155,9 @@ def run_metrics(**context):
 
 def pipeline_complete(**context):
     """Log pipeline summary from XComs."""
-    extract_counts = context["ti"].xcom_pull(key="extract_row_counts", task_ids="extract")
+    extract_counts = context["ti"].xcom_pull(
+        key="extract_row_counts", task_ids="extract"
+    )
     load_stats = context["ti"].xcom_pull(key="load_stats", task_ids="load_to_warehouse")
     print(f"Pipeline complete | extracted: {extract_counts} | loaded: {load_stats}")
 

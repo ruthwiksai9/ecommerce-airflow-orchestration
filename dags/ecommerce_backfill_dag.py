@@ -5,6 +5,7 @@ Manual trigger only. Use when pipeline missed runs or data needs reprocessing.
 Set start_date and end_date in DAG config:
   {"start_date": "2024-01-01", "end_date": "2024-03-31"}
 """
+
 from datetime import datetime, timedelta
 
 from airflow import DAG
@@ -37,7 +38,7 @@ def validate_backfill_config(**context):
 
     if not start_date or not end_date:
         raise ValueError(
-            "Backfill requires config: {\"start_date\": \"YYYY-MM-DD\", \"end_date\": \"YYYY-MM-DD\"}"
+            'Backfill requires config: {"start_date": "YYYY-MM-DD", "end_date": "YYYY-MM-DD"}'
         )
 
     start = datetime.strptime(start_date, "%Y-%m-%d")
@@ -57,6 +58,7 @@ def validate_backfill_config(**context):
 def run_backfill_pipeline(**context):
     """Re-run ETL for specified date range."""
     import sys
+
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
     from src.load.loader import load_all
@@ -73,12 +75,16 @@ def run_backfill_pipeline(**context):
 
     failed_quality = [r for r in quality_results if not r.passed]
     if failed_quality:
-        print(f"Warning: quality issues in {[r.dataset for r in failed_quality]}, loading anyway for backfill")
+        print(
+            f"Warning: quality issues in {[r.dataset for r in failed_quality]}, loading anyway for backfill"
+        )
 
     load_stats = load_all(cleaned)
     metrics_stats = run_all_metrics()
 
-    print(f"Backfill complete | load: {load_stats} | metrics: {len(metrics_stats)} queries")
+    print(
+        f"Backfill complete | load: {load_stats} | metrics: {len(metrics_stats)} queries"
+    )
 
 
 with dag:

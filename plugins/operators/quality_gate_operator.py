@@ -1,4 +1,5 @@
 """Custom Airflow operator that wraps the data quality check logic."""
+
 from typing import List
 
 from airflow.models import BaseOperator
@@ -46,17 +47,21 @@ class DataQualityGateOperator(BaseOperator):
             result = hook.get_first(sql)[0]
 
             if result != expected:
-                failed_checks.append({
-                    "check": check.get("name", sql[:50]),
-                    "expected": expected,
-                    "actual": result,
-                })
+                failed_checks.append(
+                    {
+                        "check": check.get("name", sql[:50]),
+                        "expected": expected,
+                        "actual": result,
+                    }
+                )
                 self.log.error(
                     f"Quality check FAILED on {self.table}: "
                     f"expected={expected}, actual={result} | SQL: {sql}"
                 )
             else:
-                self.log.info(f"Quality check PASSED: {check.get('name', 'check')} = {result}")
+                self.log.info(
+                    f"Quality check PASSED: {check.get('name', 'check')} = {result}"
+                )
 
         if failed_checks and self.fail_on_error:
             raise ValueError(
@@ -64,4 +69,8 @@ class DataQualityGateOperator(BaseOperator):
                 f"Details: {failed_checks}"
             )
 
-        return {"table": self.table, "checks_run": len(self.checks), "failed": len(failed_checks)}
+        return {
+            "table": self.table,
+            "checks_run": len(self.checks),
+            "failed": len(failed_checks),
+        }

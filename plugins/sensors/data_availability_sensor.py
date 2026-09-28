@@ -1,4 +1,5 @@
 """Sensor that waits until source data is available before triggering ETL."""
+
 from airflow.sensors.base import BaseSensorOperator
 from airflow.utils.decorators import apply_defaults
 
@@ -45,7 +46,9 @@ class DataAvailabilitySensor(BaseSensorOperator):
 
         try:
             row_count = hook.get_first(sql)[0]
-            self.log.info(f"[{self.table}] row count = {row_count} (need >= {self.min_rows})")
+            self.log.info(
+                f"[{self.table}] row count = {row_count} (need >= {self.min_rows})"
+            )
             return row_count >= self.min_rows
         except Exception as e:
             self.log.warning(f"Sensor poke failed: {e}")

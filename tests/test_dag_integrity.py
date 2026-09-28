@@ -1,4 +1,5 @@
 """DAG integrity tests — run with pytest before deploying."""
+
 import pytest
 from airflow.models import DagBag
 
@@ -35,7 +36,13 @@ def test_backfill_dag_no_schedule(dagbag):
 def test_etl_dag_has_required_tasks(dagbag):
     dag = dagbag.get_dag("ecommerce_etl_pipeline")
     task_ids = {t.task_id for t in dag.tasks}
-    required = {"extract", "transform", "quality_checks", "load_to_warehouse", "compute_metrics"}
+    required = {
+        "extract",
+        "transform",
+        "quality_checks",
+        "load_to_warehouse",
+        "compute_metrics",
+    }
     assert required.issubset(task_ids), f"Missing tasks: {required - task_ids}"
 
 
