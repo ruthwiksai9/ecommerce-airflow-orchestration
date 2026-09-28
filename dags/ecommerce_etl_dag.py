@@ -121,8 +121,8 @@ def load_to_warehouse(**context):
     import sys
     sys.path.insert(0, "/opt/airflow")
     from src.extract.downloader import extract_all
-    from src.transform.cleaner import transform_all
     from src.load.loader import load_all
+    from src.transform.cleaner import transform_all
 
     data_dir = context["ti"].xcom_pull(key="data_dir", task_ids="extract")
     raw = extract_all(data_dir)

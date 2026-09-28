@@ -8,8 +8,8 @@ Set start_date and end_date in DAG config:
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.python import PythonOperator
 
 default_args = {
     "owner": "data-engineering",
