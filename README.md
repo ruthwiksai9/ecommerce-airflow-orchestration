@@ -1,5 +1,7 @@
 # Ecommerce Airflow Orchestration
 
+[![CI](https://github.com/ruthwiksai9/ecommerce-airflow-orchestration/actions/workflows/ci.yml/badge.svg)](https://github.com/ruthwiksai9/ecommerce-airflow-orchestration/actions/workflows/ci.yml)
+
 Apache Airflow 2.8 orchestration layer for the [ecommerce-etl-pipeline](https://github.com/ruthwiksai9/ecommerce-etl-pipeline). Runs the full ETL on a daily schedule with retry logic, quality gates, and a custom operator/sensor library.
 
 ## DAGs
